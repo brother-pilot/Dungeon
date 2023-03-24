@@ -39,15 +39,15 @@ namespace Dungeon
 
 
             SinglyLinkedList<Point> current = null;
-            var queue = new Queue<Point>();   
+            var queue = new Queue<SinglyLinkedList<Point>> ();   
             var visited = new SinglyLinkedList<Point>(start);
             queue.Enqueue(start);
             while (queue.Count != 0)//в очередь постепенно кладутся точки которые мы будем использовать на следующем шаге
             {
                 var point = queue.Dequeue();
-                //while (current.Value!=point)
+                //while (visited.Value != point)
                 //{
-                //    current = current.Previous;
+                //    visited = visited.Previous;
                 //}
                 if (map.Dungeon[point.X, point.Y] == MapCell.Wall) continue;
                 for (int i = 0; i < chests.Length; i++)
