@@ -9,6 +9,7 @@ namespace Dungeon
         public static IEnumerable<SinglyLinkedList<Point>> FindPaths(Map map, Point start, Point[] chests)
         {
             //var list = new List<SinglyLinkedList<Point>>();
+            var direction = new int[,] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
             SinglyLinkedList<Point> current = null;
             var queue = new Queue<SinglyLinkedList<Point>>();//помещаем в очередь не только точку но и путь по которому сюда пришли
             var visited = new HashSet<Point>();//помечаем точки в которых уже искали возможные пути
@@ -21,7 +22,7 @@ namespace Dungeon
                 var point = queue.Dequeue();
                 if (map.Dungeon[point.Value.X, point.Value.Y] == MapCell.Wall) continue;
                 for (int i = 0; i < chests.Length; i++)
-                {
+                { 
                     //if (point.Value.Equals(chests[i]) && !sourcedPath.Contains(chests[i]))
                     if (point.Value.Equals(chests[i]))
                     {
@@ -32,18 +33,19 @@ namespace Dungeon
                 }
                 current = new SinglyLinkedList<Point>(point.Value, current);
                 visited.Add(current.Value);
-                for (var dy = -1; dy <= 1; dy++)
-                    for (var dx = -1; dx <= 1; dx++)
-                        if (dx != 0 && dy != 0) continue;
-                        else
-                        {
-                            var newPoint = new Point { X = point.Value.X + dx, Y = point.Value.Y + dy };
+                //for (var dy = -1; dy <= 1; dy++)
+                //    for (var dx = -1; dx <= 1; dx++)
+                //        if (dx != 0 && dy != 0) continue;
+                //        else
+                for (int j = 0; j <= 3; j++)
+                {
+                    var newPoint = new Point { X = point.Value.X + direction[j,0], Y = point.Value.Y + +direction[j, 1] };
                             if (map.InBounds(newPoint) && !queueVisited.Contains(newPoint) && !visited.Contains(newPoint))
                             {
                                 queueVisited.Add(newPoint);
                                 queue.Enqueue(new SinglyLinkedList<Point>(newPoint, point));
                             }
-                        }
+                 }
             }
             //if (list.Count > 0)
             //{

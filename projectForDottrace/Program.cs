@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Linq;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
 using Dungeon;
 
-namespace Benchmark
+namespace projectForDottrace
 {
-    [MemoryDiagnoser]
-    [RankColumn]
-    public class Benchmark
+    class Program
     {
-        //private readonly BfsTask myClass = new BfsTask();
-
-        [Benchmark] //указываем какие методы мы будем запускать на тестирование
-        public void Return_ShortestPaths2()
+        private readonly BfsTask myClass = new BfsTask();
+        public static void Main()
         {
-            var textMap = new[]
+             Return_ShortestPaths2();
+
+        }
+
+        public static void Return_ShortestPaths2()
+        {
+            var textMap = new string[]
             {
                 " C                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ",
                 "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ",
@@ -60,54 +60,50 @@ namespace Benchmark
                 "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ",
                 "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ",
                 "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ",
-
                 " C                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "
             };
             var map = Map.FromLines(textMap);
             var paths = BfsTask.FindPaths(map, map.InitialPosition, map.Chests).ToArray();
         }
 
-        //[Benchmark] //указываем какие методы мы будем запускать на тестирование
-        //public void Return_ShortestPaths3()
-        //{
-        //    var ttt= new DungeonForm();
-        //}
-
-        //[Benchmark] //указываем какие методы мы будем запускать на тестирование
-        //public void Return_ShortestPaths2()
-        //{
-        //    var textMap = new[]
-        //    {
-        //"#P                  #",
-        //"#                   #",
-        //"#                   #",
-        //"#                   #",
-        //"#              T    #",
-        //"#     T             #",
-        //"#            T      #",
-        //"#       T           #",
-        //"#          C        #",
-        //"#                   #",
-        //"#        T          #",
-        //"#           C       #",
-        //"#      T            #",
-        //"#             T     #",
-        //"#    T              #",
-        //"#                   #",
-        //"#                   #",
-        //"#                   #",
-        //"#                  E#"
-        //    };
-
-        //    var map = Map.FromLines(textMap);
-        //    var paths = BfsTask.FindPaths(map, map.InitialPosition, map.Chests).ToArray();
-        //}
-    }
-    public class Program
-    {
-        public static void Main(string[] args)
+        public static void Return_ShortestPaths3()
         {
-            var summary = BenchmarkRunner.Run<Benchmark>(); //указываем какой класс мы хотим тестировать
+            var textMap2 = new[]
+            {
+                "#P                  #",
+                "#                   #",
+                "#                   #",
+                "#                   #",
+                "#              T    #",
+                "#     T             #",
+                "#            T      #",
+                "#       T           #",
+                "#          C        #",
+                "#                   #",
+                "#        T          #",
+                "#           C       #",
+                "#      T            #",
+                "#             T     #",
+                "#    T              #",
+                "#                   #",
+                "#                   #",
+                "#                   #",
+                "#                  E#"
+            };
+            var textMap1 = new[]
+            {
+                "P  #",
+                "#  #",
+                "C   "
+            };
+            //Console.WriteLine(textMap2.Where(b=>b!=null).Select(b=>b));
+            //textMap2.Where(b => b != null)
+            //    .ToList()
+            //    .ForEach(s => Console.WriteLine(s));
+            //textMap.ToList().ForEach(b=> Console.WriteLine(b));
+            var map = Map.FromLines(textMap2);
+            var paths = BfsTask.FindPaths(map, map.InitialPosition, map.Chests).ToArray();
         }
     }
 }
+
