@@ -18,25 +18,29 @@ namespace Dungeon
                 List<Point>[] pathsToExit = FindPath(map, map.InitialPosition, new Point[] { map.Exit });
                 if (pathsToExit.Length == 0)
                     return new MoveDirection[0];
-                int count = pathsToExit[0].Count();
-                MoveDirection[] directionToExit = new MoveDirection[count - 1];
-                ConvertPathToDirection(ref directionToExit, 0, pathsToExit);
-                return directionToExit;
+                return pathsToExit[0]
+                .Zip(pathsToExit[0].Skip(1), (a, b) =>
+                ConvertOffsetToDirection(new Point(a.X - b.X, a.Y - b.Y)))
+                .Reverse()
+                .ToArray();
             }
-            var pathsFromExitToChests = FindPath(map, map.Exit, map.Chests);
+            List<Point>[] pathsFromExitToChests = FindPath(map, map.Exit, map.Chests);
             int min = 0;
             int minItem1 = 0;
             int minItem2 = 0;
             FindMinSteps(ref min, ref minItem1, ref minItem2, pathsToChests, pathsFromExitToChests);
             if (min == 0) return new MoveDirection[0];
-            MoveDirection[] direction = new MoveDirection[min - 2];
-            //int[,] dir = new int[min - 2, 2];
-            //pathsToChests.Zip()
-            ConvertPathToDirection(ref direction, minItem1, pathsToChests);
-            ConvertPathToDirectionInvers(ref direction, minItem1, minItem2, pathsToChests, pathsFromExitToChests);
-            return direction;
+            var firstPath = pathsToChests[minItem1]
+                .Zip(pathsToChests[minItem1].Skip(1), (a, b) =>
+                ConvertOffsetToDirection(new Point(a.X - b.X, a.Y - b.Y)))
+                .Reverse()
+                .ToArray();
+            var secondPath = pathsFromExitToChests[minItem2]
+                .Zip(pathsFromExitToChests[minItem2].Skip(1), (a, b) =>
+                    ConvertOffsetToDirection(new Point(-a.X + b.X, -a.Y + b.Y)))
+                .ToArray();
+            return firstPath.Concat(secondPath).ToArray(); ;
         }
-
 
         private static List<Point>[] FindPath(Map map, Point start, Point[] chests)
         {
@@ -47,6 +51,7 @@ namespace Dungeon
         private static void FindMinSteps(ref int min, ref int minItem1, ref int minItem2,
             List<Point>[] pathsToChests, List<Point>[] pathsFromExitToChests)
         {
+            
             for (int i = 0; i < pathsToChests.Length; i++)
             {
                 for (int j = 0; j < pathsFromExitToChests.Length; j++)
@@ -69,34 +74,24 @@ namespace Dungeon
                     }
                 }
             }
+            //var enrollments = from pathF in pathsToChests
+            //    from pathS in pathsFromExitToChests
+            //    where (pathF[0] == pathS[0])
+            //    select ((pathF.Count() + pathS.Count()).Min());
+        }
+        
+        public static MoveDirection ConvertOffsetToDirection(Point offset)
+        {
+            return offsetToDirection[offset];
         }
 
-        private static void ConvertPathToDirection(ref MoveDirection[] direction, int minItem1,
-            List<Point>[] pathsToChests)
+        private static readonly Dictionary<Point, MoveDirection> offsetToDirection = new Dictionary<Point, MoveDirection>
         {
-            for (int i = pathsToChests[minItem1].Count - 1; i > 0; i--)
-            {
-                int coordinateX = pathsToChests[minItem1][i - 1].X - pathsToChests[minItem1][i].X;
-                int coordinateY = pathsToChests[minItem1][i - 1].Y - pathsToChests[minItem1][i].Y;
-                direction[pathsToChests[minItem1].Count - 1 - i] =
-                    Walker.ConvertOffsetToDirection(new Size(coordinateX, coordinateY));
-            }
-        }
-
-        private static void ConvertPathToDirectionInvers(ref MoveDirection[] direction, int minItem1, int minItem2,
-            List<Point>[] pathsToChests, List<Point>[] pathsFromExitToChests)
-        {
-            ConvertPathToDirection(ref direction, minItem1, pathsToChests);
-            direction[pathsToChests[minItem1].Count - 1] = Walker.ConvertOffsetToDirection(new Size(
-                pathsFromExitToChests[minItem2][1].X - pathsToChests[minItem1][0].X,
-                pathsFromExitToChests[minItem2][1].Y - pathsToChests[minItem1][0].Y));
-            for (int i = 0; i < pathsFromExitToChests[minItem2].Count - 1; i++)
-            {
-                int coordinateX = pathsFromExitToChests[minItem2][i + 1].X - pathsFromExitToChests[minItem2][i].X;
-                int coordinateY = pathsFromExitToChests[minItem2][i + 1].Y - pathsFromExitToChests[minItem2][i].Y;
-                direction[i + pathsToChests[minItem1].Count - 1] = Walker.ConvertOffsetToDirection(new Size(coordinateX, coordinateY));
-            }
-        }
+            {new Point(0, -1), MoveDirection.Up},
+            {new Point(0, 1), MoveDirection.Down},
+            {new Point(-1, 0), MoveDirection.Left},
+            {new Point(1, 0), MoveDirection.Right}
+        };
 
     }
 }
