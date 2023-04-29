@@ -5,7 +5,17 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+/*
+ * Подготовка закончилась и вы в настоящем лабиринте с сокровищами! Сил хватит только на один сундук и то еле-еле. Найдите кратчайший путь из начальной точки до выхода, проходящий через хотя бы один сундук.
 
+Решайте задачу в классе DungeonTask.
+
+Детали реализации для граничных случаев можно найти в классе с тестами Dungeon_Should. Сделайте так, чтобы все тесты проходили.
+
+После выполнения этого задания, при запуске проекта можно увидеть визуализацию пути. Наслаждайтесь найденными сокровищами!
+
+Эту задачу можно элегантно решить без циклов. Для этого придется познакомиться с методами Linq.
+ */
 namespace Dungeon
 {
     public class DungeonTask
@@ -13,10 +23,10 @@ namespace Dungeon
         public static MoveDirection[] FindShortestPath(Map map)
         {
             var pathsToChests = FindPath(map, map.InitialPosition, map.Chests);
-            if (pathsToChests.Length == 0)
+            if (pathsToChests.Length == 0) //случай когда сундуков нет
             {
                 List<Point>[] pathsToExit = FindPath(map, map.InitialPosition, new Point[] { map.Exit });
-                if (pathsToExit.Length == 0)
+                if (pathsToExit.Length == 0) //вообще не нашли путь до выхода
                     return new MoveDirection[0];
                 return pathsToExit[0]
                 .Zip(pathsToExit[0].Skip(1), (a, b) =>
@@ -29,6 +39,7 @@ namespace Dungeon
             int minItem1 = 0;
             int minItem2 = 0;
             FindMinSteps(ref min, ref minItem1, ref minItem2, pathsToChests, pathsFromExitToChests);
+            //определяем какой путь самый короткий путь до сундука
             if (min == 0) return new MoveDirection[0];
             var firstPath = pathsToChests[minItem1]
                 .Zip(pathsToChests[minItem1].Skip(1), (a, b) =>
@@ -74,6 +85,7 @@ namespace Dungeon
                     }
                 }
             }
+            //попытался переписать через Linq
             //var enrollments = from pathF in pathsToChests
             //    from pathS in pathsFromExitToChests
             //    where (pathF[0] == pathS[0])
