@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Dungeon
@@ -158,6 +160,24 @@ namespace Dungeon
 
 			IsValidPath(map, path, expectedLength);
 		}
+
+        [Test, Order(8)]
+        [TestCase(500, 40, 50)]
+        [TestCase(500, 81, 103)]
+        public void Large_Map_Filled_With_Chests(int timeout, int width, int height)
+        {
+            var lines = new string[height];
+            lines[0] = $"P{new string('C', width - 1)}";
+            foreach (var i in Enumerable.Range(1, height - 1))
+            {
+                lines[i] = new string('C', width);
+            }
+            var miniMap = Map.FromLines(lines);
+            var sw = Stopwatch.StartNew();
+            var paths = DungeonTask.FindShortestPath(miniMap);
+            sw.Stop();
+            Assert.IsTrue(sw.ElapsedMilliseconds <= timeout, $"Actual time: {sw.ElapsedMilliseconds}, expected {timeout}");
+        }
 
 		private void IsValidPath(Map map, MoveDirection[] path, int expectedPathLength)
 		{

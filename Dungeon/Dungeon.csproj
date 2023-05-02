@@ -83,6 +83,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Images\Castle.png" />
+    <Content Include="readme.txt" />
     <None Include="Images\Chest.png" />
     <Content Include="Images\Grass.png" />
     <Content Include="Images\Path.png" />
